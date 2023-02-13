@@ -1,8 +1,2 @@
 prueba
-
-
-
-
-
-help
-
+print("prueba)
