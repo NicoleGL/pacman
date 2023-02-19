@@ -5,23 +5,12 @@ black = (0, 0, 0)
 grey = (20, 20, 20)
 yellow = (255, 255, 0)
 pygame.init()
-
 class Phantom(pygame.sprite.Sprite):
     def __init__(self1):
         super().__init__()
         self1.image = pygame.image.load("PinkPhant1.png").convert()
         self1.image.set_colorkey(yellow)
         self1.rect = self1.image.get_rect()
-    def __init__(self2):
-        super().__init__()
-        self2.image = pygame.image.load("PinkPhant2.png").convert()
-        self2.image.set_colorkey(yellow)
-        self2.rect = self2.image.get_rect()
-    def __init__(self3):
-        super().__init__()
-        self3.image = pygame.image.load("PinkPhant3.png").convert()
-        self3.image.set_colorkey(yellow)
-        self3.rect = self3.image.get_rect()
 
 class Jugador(pygame.sprite.Sprite):
     def __init__(self):
@@ -38,7 +27,7 @@ phant_list = pygame.sprite.Group()
 all_sprite_list = pygame.sprite.Group()
 
 for i in range(2):
-    phant = Phantom(self2)
+    phant = Phantom()
     phant.rect.x = random.randrange(900)
     phant.rect.y = random.randrange(600)
     

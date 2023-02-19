@@ -1,4 +1,4 @@
-import pygame, random
+import pygame
 
 white = (255, 255, 255)
 black = (0, 0, 0)
@@ -12,12 +12,22 @@ class Phantom(pygame.sprite.Sprite):
         super().__init__()
         self.color = color
         self.number = number
-        name = {color} + "Phant" + {number} + ".png"
+        name = f"{color}Phant{number}.png"
         self.image = pygame.image.load(name).convert()
         self.image.set_colorkey(yellow)
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+
+    def change_state(self, number):
+        self.number = number
+        name = f"{self.color}Phant{number}.png"
+        self.image = pygame.image.load(name).convert()
+        self.image.set_colorkey(yellow)
+
+    def animation(self):
+        self.change_state(((self.number + 1) % 3) + 1)
+
 
 class Jugador(pygame.sprite.Sprite):
     def __init__(self):
@@ -31,9 +41,9 @@ clock = pygame.time.Clock()
 done = False
 
 phant_list = pygame.sprite.Group()
-all_sprite_list = pygame.sprite.Group()
+all_sprite_list = pygame.sprite.Group() 
 for i in range(1):
-    phant = Phantom(Pink, 1, 200, 300)
+    phant = Phantom("Pink", 1, 200, 300)
     
     phant_list.add(phant)
     all_sprite_list.add(phant)
@@ -47,14 +57,15 @@ while not done:
             done = True
 
     mouse_pos = pygame.mouse.get_pos()
-    jugador.rect.x = mouse_pos[0]
-    jugador.rect.y = mouse_pos[1]
+    phant.rect.x = mouse_pos[0]
+    phant.rect.y = mouse_pos[1]
     
     screen.fill(black)
-    
+    phant.animation()
+
     all_sprite_list.draw(screen)
     
     pygame.display.flip()
-    clock.tick(60)
+    clock.tick(6)
     
 pygame.quit()
