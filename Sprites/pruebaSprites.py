@@ -8,16 +8,10 @@ pygame.init()
 class Phantom(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-<<<<<<< HEAD
-        self1.image = pygame.image.load("PinkPhant1.png").convert()
-        self1.image.set_colorkey(yellow)
-        self1.rect = self1.image.get_rect()
-=======
         self.image = pygame.image.load("PinkPhant1.png").convert()
         self.image.set_colorkey(yellow)
         self.rect = self.image.get_rect()
     
->>>>>>> af05c58 (Soy Bruno 2.0)
 
 class Jugador(pygame.sprite.Sprite):
     def __init__(self):
