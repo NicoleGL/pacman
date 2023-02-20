@@ -66,6 +66,6 @@ while not done:
     all_sprite_list.draw(screen)
     
     pygame.display.flip()
-    clock.tick(6)
+    clock.tick(30)
     
 pygame.quit()

@@ -1,4 +1,4 @@
-import pygame
+import pygame, random
 
 white = (255, 255, 255)
 black = (0, 0, 0)
@@ -26,11 +26,7 @@ class Phantom(pygame.sprite.Sprite):
         self.image.set_colorkey(yellow)
 
     def animation(self):
-<<<<<<< HEAD
-        self.change_state(((self.number + 1) % 3) + 1)
-=======
         self.change_state(((self.number + 1) % 12) + 1)
->>>>>>> af05c58 (Soy Bruno 2.0)
 
 
 class Jugador(pygame.sprite.Sprite):
@@ -70,10 +66,6 @@ while not done:
     all_sprite_list.draw(screen)
     
     pygame.display.flip()
-<<<<<<< HEAD
-    clock.tick(6)
-=======
     clock.tick(12)
->>>>>>> af05c58 (Soy Bruno 2.0)
     
 pygame.quit()
