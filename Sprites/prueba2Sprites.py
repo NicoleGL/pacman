@@ -25,10 +25,12 @@ class Phantom(pygame.sprite.Sprite):
         self.image.set_colorkey(yellow)
 
     def animation(self):
+
         self.change_state(((self.number + 1) % 4) + 1)
         
     def animation2(self):
         self.change_state(((self.number + 1) % 5) + 1)
+
 
 class Jugador(pygame.sprite.Sprite):
     def __init__(self):
@@ -71,5 +73,6 @@ while not done:
     
     pygame.display.flip()
     clock.tick(10)
+
     
 pygame.quit()
