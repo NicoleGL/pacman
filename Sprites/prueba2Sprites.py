@@ -46,14 +46,14 @@ done = False
 all_sprite_list = pygame.sprite.Group() 
 for i in range(1):
     phant = Phantom("Red", 1, 200, 300)
-    phont = Phantom("Blue", 1, 300, 300)
+    phont = Phantom("Blue", 1, 0, 0)
     
 all_sprite_list = pygame.sprite.Group()
 all_sprite_list.add(phant)
 all_sprite_list.add(phont)
 
 jugador = Jugador()
-all_sprite_list.add(jugador)  
+# all_sprite_list.add(jugador)  
     
 while not done:
     for event in pygame.event.get():
