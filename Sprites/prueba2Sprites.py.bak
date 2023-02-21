@@ -30,7 +30,7 @@ class Phantom(pygame.sprite.Sprite):
         
     def animation2(self):
         self.change_state(((self.number + 1) % 5) + 1)
-
+       # pygame.time.wait(100)
 
 class Jugador(pygame.sprite.Sprite):
     def __init__(self):
@@ -72,7 +72,7 @@ while not done:
     all_sprite_list.draw(screen)
     
     pygame.display.flip()
-    clock.tick(8)
+    clock.tick(120)
 
     
 pygame.quit()
