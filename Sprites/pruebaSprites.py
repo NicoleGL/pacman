@@ -5,6 +5,7 @@ black = (0, 0, 0)
 grey = (20, 20, 20)
 yellow = (255, 255, 0)
 pygame.init()
+
 class Phantom(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -12,7 +13,6 @@ class Phantom(pygame.sprite.Sprite):
         self.image.set_colorkey(yellow)
         self.rect = self.image.get_rect()
     
-
 class Jugador(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -29,8 +29,7 @@ all_sprite_list = pygame.sprite.Group()
 
 for i in range(2):
     phant = Phantom()
-    phant.rect.x = random.randrange(900)
-    phant.rect.y = random.randrange(600)
+
     
     phant_list.add(phant)
     all_sprite_list.add(phant)
