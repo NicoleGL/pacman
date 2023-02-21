@@ -30,7 +30,7 @@ class Phantom(pygame.sprite.Sprite):
         
     def animation2(self):
         self.change_state(((self.number + 1) % 5) + 1)
-
+       # pygame.time.wait(100)
 
 class Jugador(pygame.sprite.Sprite):
     def __init__(self):
@@ -46,14 +46,14 @@ done = False
 all_sprite_list = pygame.sprite.Group() 
 for i in range(1):
     phant = Phantom("Red", 1, 200, 300)
-    phont = Phantom("Blue", 1, 300, 300)
+    phont = Phantom("Blue", 1, 0, 0)
     
 all_sprite_list = pygame.sprite.Group()
 all_sprite_list.add(phant)
 all_sprite_list.add(phont)
 
 jugador = Jugador()
-all_sprite_list.add(jugador)  
+# all_sprite_list.add(jugador)  
     
 while not done:
     for event in pygame.event.get():
@@ -72,7 +72,7 @@ while not done:
     all_sprite_list.draw(screen)
     
     pygame.display.flip()
-    clock.tick(10)
+    clock.tick(60)
 
     
 pygame.quit()
