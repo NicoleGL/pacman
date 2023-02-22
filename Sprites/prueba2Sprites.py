@@ -10,9 +10,10 @@ class Phantom(pygame.sprite.Sprite):
 
     
 
-    def  __init__(self, color, number, x, y, direction):
+    def  __init__(self, color, number, x, y, waited, direction):
         super().__init__()
         self.direction = direction
+        self.waited = waited
         self.color = color
         self.number = number
         name = f"{color}/{color}Phant{number}{direction}.png"
@@ -23,7 +24,8 @@ class Phantom(pygame.sprite.Sprite):
         self.rect.y = y
 
         
-        
+    def delay(self):
+        self.waited += 1  
         
     def change_state(self, number):
         self.number = number
@@ -35,7 +37,10 @@ class Phantom(pygame.sprite.Sprite):
         self.change_state(((self.number + 1) % 5) + 1)
         
     def animation2(self):
-        self.change_state((((((self.number + 1) % 5) + 1) + 1) % 5) + 1)
+        self.delay()
+        if (self.waited == 6):
+            self.change_state((((((self.number + 1) % 5) + 1) + 1) % 5) + 1)
+            self.waited = 0
        # pygame.time.wait(100)
     
 
@@ -45,23 +50,23 @@ done = False
 
 all_sprite_list = pygame.sprite.Group() 
 for i in range(1):
-    phant = Phantom("Blue", 1, 32, 0, "N")
-    phont = Phantom("Blue", 1, 64, 0, "S")
-    phent = Phantom("Blue", 1, 96, 0, "E")
-    phunt = Phantom("Blue", 1, 128, 0, "W")
-    phant2 = Phantom("Red", 1, 32, 32, "N")
-    phont2 = Phantom("Red", 1, 64, 32, "S")
-    phent2 = Phantom("Red", 1, 96, 32, "E")
-    phunt2 = Phantom("Red", 1, 128, 32, "W")
-    phant3 = Phantom("Pink", 1, 32, 64, "N")
-    phont3 = Phantom("Pink", 1, 64, 64, "S")
-    phent3 = Phantom("Pink", 1, 96, 64, "E")
-    phunt3 = Phantom("Pink", 1, 128, 64, "W")
-    phant4 = Phantom("Orange", 1, 32, 96, "N")
-    phont4 = Phantom("Orange", 1, 64, 96, "S")
-    phent4 = Phantom("Orange", 1, 96, 96, "E")
-    phunt4 = Phantom("Orange", 1, 128, 96, "W")
-    
+    phant = Phantom("ScaredB", 1, 32, 0,0, "N")
+    phont = Phantom("ScaredB", 1, 64, 0,0, "S")
+    phent = Phantom("ScaredB", 1, 96, 0,0, "E")
+    phunt = Phantom("ScaredB", 1, 128, 0,0, "W")
+    phant2 = Phantom("ScaredW", 1, 32, 32,0, "N")
+    phont2 = Phantom("ScaredW", 1, 64, 32,0, "S")
+    phent2 = Phantom("ScaredW", 1, 96, 32,0, "E")
+    phunt2 = Phantom("ScaredW", 1, 128, 32,0, "W")
+    phant3 = Phantom("Pink", 1, 32, 64,0, "N")
+    phont3 = Phantom("Pink", 1, 64, 64, 0,"S")
+    phent3 = Phantom("Pink", 1, 96, 64,0, "E")
+    phunt3 = Phantom("Pink", 1, 128, 64,0, "W")
+    phant4 = Phantom("Orange", 1, 32, 96,0, "N")
+    phont4 = Phantom("Orange", 1, 64, 96,0, "S")
+    phent4 = Phantom("Orange", 1, 96, 96,0, "E")
+    phunt4 = Phantom("Orange", 1, 128, 96,0, "W")
+    scared = Phantom("ScaredB", 1,160, 0, 0,"N" )
 all_sprite_list = pygame.sprite.Group()
 all_sprite_list.add(phant)
 all_sprite_list.add(phont)
@@ -79,7 +84,7 @@ all_sprite_list.add(phant4)
 all_sprite_list.add(phont4)
 all_sprite_list.add(phent4)
 all_sprite_list.add(phunt4)
-
+all_sprite_list.add(scared)
 #jugador = Jugador()
 # all_sprite_list.add(jugador)  
     
@@ -88,10 +93,10 @@ while not done:
         if event.type == pygame.QUIT:
             done = True
 
-  #  mouse_pos = pygame.mouse.get_pos()
+    #mouse_pos = pygame.mouse.get_pos()
 #
- #   phant.rect.x = mouse_pos[0]
-  #  phant.rect.y = mouse_pos[1]
+    #phant.rect.x = mouse_pos[0]
+    #phant.rect.y = mouse_pos[1]
     
     screen.fill(black)
     phant.animation2()
@@ -110,11 +115,12 @@ while not done:
     phont4.animation2()
     phent4.animation2()
     phunt4.animation2()
+    scared.animation2()
 
     all_sprite_list.draw(screen)
     
     pygame.display.flip()
-    clock.tick(20)
+    clock.tick(120)
 
     
 pygame.quit()
