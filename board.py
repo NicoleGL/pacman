@@ -1,34 +1,9 @@
-import pygame, sys
+import pygame
 
-
-clock=pygame.time.Clock()
-pygame.init()
-
+#Constantes
 yellow = pygame.Color(255, 242, 0)
+black = pygame.Color(0, 0, 0)
 
-chunk = 32
-
-ancho = 608
-alto = 384
-size = (ancho, alto)
-
-screen = pygame.display.set_mode(size)
-
-pygame.display.set_caption("Pak-Nam")
-backgroundImg = pygame.image.load("BackgroundImg.png")
-
-def colocarObjeto(direction, coord):
-    blockImg = pygame.image.load(f"block{direction}.png").convert_alpha()
-    blockImg.set_colorkey(yellow)
-    screen.blit(blockImg, (coord[0] * chunk, coord[1] * chunk))
-    
-  #  print(blockImg.get_at((0, 0))) mr pinturitas me ayuda ;)
-
-def colocarDoor(x, y):
-    blockImg = pygame.image.load("blockDoor.png").convert_alpha()
-    blockImg.set_colorkey(yellow)
-    screen.blit(blockImg, (x * chunk, y * chunk))
-    
 posiciones_bloque_right = [(1,2),(1,3),(1,4),(1,5),(1,7),(1,8),(1,9),
                             (1,10),(3,5),(3,6),(3,7),(5,3),(5,4),(5,5),
                             (5,7),(5,8),(5,9),(7,6),(7,8),(7,9),(8,5),
@@ -61,26 +36,7 @@ posiciones_bloque_up = [(0,7),(1,7),(2,11),(3, 3),(3, 5),(3, 9),(3, 11),
                         (14,3),(14,9),(14,11),(13,3),(13,7),(13,11),(12,11),
                         (11,3),(11,5),(11,11),(10,3),(10,5),(10,7),(10,11)]
 
-def ponerBloques():
-    right = posiciones_bloque_right
-    left = posiciones_bloque_left
-    down = posiciones_bloque_down
-    up = posiciones_bloque_up
-    for posicion in right:
-        colocarObjeto("Right",posicion)
-    for posicion in left:
-        colocarObjeto("Left",posicion)
-    for posicion in down:
-        colocarObjeto("Down",posicion)
-    for posicion in up:
-        colocarObjeto("Up",posicion)
-
-def colocarCamino(coord):
-    blockImg = pygame.image.load("path.png").convert_alpha()
-    blockImg.set_colorkey(yellow)
-    screen.blit(blockImg, (coord[0] * chunk, coord[1] * chunk))
-
-posiciones_camino_public = [(0, 6) ,(1, 6), (2, 2) ,(2, 3) ,(2, 4) ,(2, 5), 
+posiciones_camino = [(0, 6) ,(1, 6), (2, 2) ,(2, 3) ,(2, 4) ,(2, 5), 
                 (2, 6) ,(2, 7) ,(2, 8) ,(2, 9) ,(2, 10) ,(3, 2) ,(3, 4) ,
                 (3, 8) ,(3, 10) ,(4, 2) , (4, 4), (4, 5), (4, 6), (4, 7),
                 (4, 8), (4, 10), (5, 2), (5, 6), (5, 10), (6, 2), (6, 3),
@@ -96,22 +52,22 @@ posiciones_camino_public = [(0, 6) ,(1, 6), (2, 2) ,(2, 3) ,(2, 4) ,(2, 5),
                 (16, 6) ,(16, 7) ,(16, 8) ,(16, 9) ,(16, 10), (17, 6),
                 (18, 6)] #el gran array de arrays
 
-def ponerCaminos():
-    posiciones_camino = posiciones_camino_public
+#Funciones
+def set_image(type, coord, screen):
+    block_img = pygame.image.load(f"mapa/{type}.png").convert_alpha()
+    block_img.set_colorkey(yellow)
+    screen.blit(block_img, (coord[0] * 32, coord[1] * 32))
+
+def set_board(screen):
+    screen.fill(black)
+    for posicion in posiciones_bloque_right:
+        set_image("BlockRight", posicion, screen)
+    for posicion in posiciones_bloque_left:
+        set_image("BlockLeft", posicion, screen)
+    for posicion in posiciones_bloque_down:
+        set_image("BlockDown", posicion, screen)
+    for posicion in posiciones_bloque_up:
+        set_image("BlockUp", posicion, screen)
     for posicion in posiciones_camino:
-        colocarCamino(posicion)
-
-
-""" while True:
-    for event in pygame.event.get():
-        screen.blit(backgroundImg, (0, 0))
-        if event.type == pygame.QUIT:
-            sys.exit()
-        
-    ponerCaminos()
-    ponerBloques()
-    colocarDoor(9, 5)
-    
-
-    pygame.display.update()
-    clock.tick(120) """
+        set_image("path", posicion, screen)
+    set_image("BlockDoor", (9,5), screen)

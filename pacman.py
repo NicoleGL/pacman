@@ -1,9 +1,11 @@
-import pygame
+import pygame, board
+
 
 class Pacman(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.direction = None
+        self.next_direction = None
         self.image = pygame.image.load(f"images/paknam_{self.direction}.png").convert()
         self.image.set_colorkey((0, 0, 0))
         self.rect = self.image.get_rect()
@@ -11,15 +13,69 @@ class Pacman(pygame.sprite.Sprite):
         self.rect.y = y
         self.speed = (0, 0)
 
+
     def update_img(self):
         self.image = pygame.image.load(f"images/paknam_{self.direction}.png").convert()
         self.image.set_colorkey((0, 0, 0))
 
 
-    def stop_if_wall(self, width, height):
-        if((self.direction == "left" and self.rect.x < 3) or
-          (self.direction == "right" and self.rect.x > (width - (self.rect.width + 3)))):
-            self.speed = (0, self.speed[1])
-        elif((self.direction == "up" and self.rect.y < 3) or
-            (self.direction == "down" and self.rect.y > (height - (self.rect.height + 3)))):
-            self.speed = (self.speed[0], 0)
+    def next_chunk(self):
+        chunk_x = self.rect.x // 32
+        chunk_y = self.rect.y // 32
+        if(self.direction == "up"):
+            chunk_y -= 1
+        if(self.direction == "down"):
+            chunk_y += 1
+        if(self.direction == "left"):
+            chunk_x -= 1
+        if(self.direction == "right"):
+            chunk_x += 1
+        return (chunk_x, chunk_y)
+    
+
+    def next_possible_chunk(self):
+        chunk_x = self.rect.x // 32
+        chunk_y = self.rect.y // 32
+        if(self.next_direction == "up"):
+            chunk_y -= 1
+        if(self.next_direction == "down"):
+            chunk_y += 1
+        if(self.next_direction == "left"):
+            chunk_x -= 1
+        if(self.next_direction == "right"):
+            chunk_x += 1
+        return (chunk_x, chunk_y)
+
+
+    def stop_if_wall(self):
+        chunk = self.next_chunk()
+        chunk_x, chunk_y = chunk
+        path = board.posiciones_camino
+        if(not chunk in path):
+            if((self.direction == "left" and self.rect.x <= ((chunk_x + 1)*32))
+               or (self.next_direction == "right")):
+                self.speed = (0, self.speed[1])
+            elif((self.direction == "up" and self.rect.y <= ((chunk_y + 1)*32))
+               or (self.next_direction == "down")):
+                self.speed = (self.speed[0], 0)
+
+
+    def move_if_possible(self, speed):
+        chunk = self.next_possible_chunk()
+        chunk_x, chunk_y = chunk
+        path = board.posiciones_camino
+        if(chunk in path):
+            if(self.next_direction == "left" and self.rect.y <= (chunk_y*32)):
+                self.direction = self.next_direction
+                self.speed = (-speed, 0)
+            elif(self.next_direction == "right" and self.rect.y <= (chunk_y*32)):
+                self.direction = self.next_direction
+                self.speed = (speed, 0)
+            elif(self.next_direction == "up" and self.rect.x <= (chunk_x*32)):
+                self.direction = self.next_direction
+                self.speed = (0, -speed)
+            elif(self.next_direction == "down" and self.rect.x <= (chunk_x*32)):
+                self.direction = self.next_direction
+                self.speed = (0, speed)
+        self.update_img()
+
