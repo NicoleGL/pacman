@@ -1,4 +1,4 @@
-import pygame, random
+import pygame, random, time
 
 white = (255, 255, 255)
 black = (0, 0, 0)
@@ -93,10 +93,10 @@ while not done:
         if event.type == pygame.QUIT:
             done = True
 
-    #mouse_pos = pygame.mouse.get_pos()
-#
-    #phant.rect.x = mouse_pos[0]
-    #phant.rect.y = mouse_pos[1]
+  #  mouse_pos = pygame.mouse.get_pos()
+
+  #  phant.rect.x = mouse_pos[0]
+  #  phant.rect.y = mouse_pos[1]
     
     screen.fill(black)
     phant.animation2()
@@ -118,6 +118,7 @@ while not done:
     scared.animation2()
 
     all_sprite_list.draw(screen)
+    
     
     pygame.display.flip()
     clock.tick(120)
