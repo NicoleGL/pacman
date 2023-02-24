@@ -102,16 +102,16 @@ def ponerCaminos():
         colocarCamino(posicion)
 
 
-""" while True:
+while True:
     for event in pygame.event.get():
         screen.blit(backgroundImg, (0, 0))
         if event.type == pygame.QUIT:
             sys.exit()
         
-    ponerCaminos()
+    #ponerCaminos()
     ponerBloques()
-    colocarDoor(9, 5)
+    #colocarDoor(9, 5)
     
 
     pygame.display.update()
-    clock.tick(120) """
+    clock.tick(120) 
