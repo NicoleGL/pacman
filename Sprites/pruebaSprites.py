@@ -3,6 +3,7 @@ import pygame
 white = (255, 255, 255)
 black = (0, 0, 0)
 grey = (20, 20, 20)
+purple = (81, 0, 93)
 yellow = (255, 255, 0)
 pygame.init()
 
@@ -43,7 +44,10 @@ class Phantom(pygame.sprite.Sprite):
         name = f"{self.color}/{self.color}Phant{self.number}{self.direction}.png"
         self.image = pygame.image.load(name).convert()
         self.image.set_colorkey(yellow)
-        
+
+    def change_direction(self, newdirection):
+        self.newdirection = newdirection
+        self.direction = newdirection     
 
     def animation2(self):
         self.delay()
@@ -55,7 +59,7 @@ class Phantom(pygame.sprite.Sprite):
         self.scaredTime += 1
     
     def imScared(self):
-        if self.scaredTime > 0:
+        if (self.scaredTime > 0) & (self.scaredTime < 3000):
             self.timepassed()
             if (self.scaredTime == 360)|(self.scaredTime == 730)|(self.scaredTime == 790)|(self.scaredTime == 850):
                 self.change_mood("ScaredW")
@@ -64,6 +68,8 @@ class Phantom(pygame.sprite.Sprite):
             if self.scaredTime == 880:
                 self.change_mood(self.name)
                 self.scaredTime = 0
+        elif (self.scaredTime > 3000):
+            self.change_mood("Eyes")
 
 
     
@@ -97,6 +103,31 @@ while not done:
                 pink.setscaredTime(9)
                 orange.setscaredTime(9)
                 red.setscaredTime(9)
+            if event.key == pygame.K_a:
+                blue.setscaredTime(3010)
+                pink.setscaredTime(3010)
+                orange.setscaredTime(3010)
+                red.setscaredTime(3010)
+            if event.key == pygame.K_UP:
+                red.change_direction("N")
+                blue.change_direction("N")
+                orange.change_direction("N")
+                pink.change_direction("N")
+            if event.key == pygame.K_DOWN:
+                red.change_direction("S")
+                blue.change_direction("S")
+                orange.change_direction("S")
+                pink.change_direction("S")
+            if event.key == pygame.K_RIGHT:
+                red.change_direction("E")
+                blue.change_direction("E")
+                orange.change_direction("E")
+                pink.change_direction("E")
+            if event.key == pygame.K_LEFT:
+                red.change_direction("W")
+                blue.change_direction("W")
+                orange.change_direction("W")
+                pink.change_direction("W")
 
         
 
@@ -109,7 +140,7 @@ while not done:
     orange.imScared()
     pink.imScared()
 
-    screen.fill(black)
+    screen.fill(purple)
     all_sprite_list.draw(screen)
     
     pygame.display.flip()
