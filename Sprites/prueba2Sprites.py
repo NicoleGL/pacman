@@ -88,7 +88,7 @@ all_sprite_list.add(scared)
 #jugador = Jugador()
 # all_sprite_list.add(jugador)  
     
-while not done:
+""" while not done:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
@@ -123,4 +123,4 @@ while not done:
     clock.tick(120)
 
     
-pygame.quit()
+pygame.quit() """

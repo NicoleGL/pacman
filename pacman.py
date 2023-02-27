@@ -1,4 +1,4 @@
-import pygame, board
+import pygame, board, time
 
 
 class Pacman(pygame.sprite.Sprite):
@@ -51,12 +51,18 @@ class Pacman(pygame.sprite.Sprite):
         chunk = self.next_chunk()
         chunk_x, chunk_y = chunk
         path = board.posiciones_camino
-        if(not chunk in path):
+        if(chunk == (-1, 6)):
+            if(self.rect.x <= 0):
+                self.rect.x = 604
+        elif(chunk == (19, 6)):
+            if(self.rect.x >= 604):
+                self.rect.x = 0
+        elif(not chunk in path or chunk == (9,5)):
             if((self.direction == "left" and self.rect.x <= ((chunk_x + 1)*32))
-               or (self.next_direction == "right")):
+               or (self.direction == "right")):
                 self.speed = (0, self.speed[1])
             elif((self.direction == "up" and self.rect.y <= ((chunk_y + 1)*32))
-               or (self.next_direction == "down")):
+               or (self.direction == "down")):
                 self.speed = (self.speed[0], 0)
 
 
@@ -64,7 +70,7 @@ class Pacman(pygame.sprite.Sprite):
         chunk = self.next_possible_chunk()
         chunk_x, chunk_y = chunk
         path = board.posiciones_camino
-        if(chunk in path):
+        if(chunk in path and chunk != (9,5)):
             if(self.next_direction == "left" and self.rect.y <= (chunk_y*32)):
                 self.direction = self.next_direction
                 self.speed = (-speed, 0)
@@ -78,4 +84,3 @@ class Pacman(pygame.sprite.Sprite):
                 self.direction = self.next_direction
                 self.speed = (0, speed)
         self.update_img()
-

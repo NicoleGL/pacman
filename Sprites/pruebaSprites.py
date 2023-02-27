@@ -17,7 +17,7 @@ class Phantom(pygame.sprite.Sprite):
         self.x = x
         self.y = y
         self.scaredTime = scaredTime
-        name = f"{self.color}/{self.color}Phant{number}{self.direction}.png"
+        name = f"Sprites/{self.color}/{self.color}Phant{number}{self.direction}.png"
         self.image = pygame.image.load(name).convert()
         self.image.set_colorkey(yellow)
         self.rect = self.image.get_rect()
@@ -33,14 +33,14 @@ class Phantom(pygame.sprite.Sprite):
     
     def change_state(self, number2):
         self.number = number2
-        name = f"{self.color}/{self.color}Phant{self.number}{self.direction}.png"
+        name = f"Sprites/{self.color}/{self.color}Phant{self.number}{self.direction}.png"
         self.image = pygame.image.load(name).convert()
         self.image.set_colorkey(yellow)
 
     def change_mood(self,  mood):
         self.mood = mood
         self.color = mood
-        name = f"{self.color}/{self.color}Phant{self.number}{self.direction}.png"
+        name = f"Sprites/{self.color}/{self.color}Phant{self.number}{self.direction}.png"
         self.image = pygame.image.load(name).convert()
         self.image.set_colorkey(yellow)
         
@@ -87,7 +87,7 @@ for i in range(1):
     all_sprite_list.add(orange)
     all_sprite_list.add(pink)
     
-while not done:
+""" while not done:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
@@ -115,4 +115,4 @@ while not done:
     pygame.display.flip()
     clock.tick(120)
     
-pygame.quit()
+pygame.quit()  """

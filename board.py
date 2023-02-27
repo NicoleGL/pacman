@@ -1,4 +1,5 @@
 import pygame
+from mapa import block
 
 #Constantes
 yellow = pygame.Color(255, 242, 0)
@@ -52,6 +53,29 @@ posiciones_camino = [(0, 6) ,(1, 6), (2, 2) ,(2, 3) ,(2, 4) ,(2, 5),
                 (16, 6) ,(16, 7) ,(16, 8) ,(16, 9) ,(16, 10), (17, 6),
                 (18, 6)] #el gran array de arrays
 
+posiciones_circulito = [(2, 2) ,(2, 3) ,(2, 4) ,(2, 5), 
+                (2, 6) ,(2, 7) ,(2, 8) ,(2, 9), (3, 2) ,(3, 4) ,
+                (3, 8) ,(3, 10) ,(4, 2), (4, 5), (4, 6), (4, 7),
+                (4, 8), (4, 10), (5, 2), (5, 6), (5, 10), (6, 2), (6, 3),
+                (6, 4), (6, 5), (6, 6), (6, 7), (6, 8), (6, 9), (6, 10),
+                (7, 2), (7, 4), (7, 10), (8, 2), (8, 4), (8, 8),
+                (8, 9), (8, 10), (9, 2), (9, 4), (9, 8), 
+                (10, 2), (10, 4), (10, 8), (10, 9), (10, 10),
+                (11, 2), (11, 4), (11, 10), (12, 2), (12, 3), (12, 4), 
+                (12, 5), (12, 6), (12, 7), (12, 8), (12, 9), (12, 10),
+                (13, 2), (13, 6), (13, 10), (14, 2) , (14, 4), (14, 5), 
+                (14, 6), (14, 7), (14, 10), (15, 2) ,(15, 4) ,
+                (15, 8) ,(15, 10), (16, 3) ,(16, 4) ,(16, 5), 
+                (16, 6) ,(16, 7) ,(16, 8) ,(16, 9) ,(16, 10)]
+
+posiciones_bola = [(2,10), (16,2), (4,4), (14, 8)]
+
+posiciones_none = [(9,5), (8,6), (9,6), (10,6), (0,6), (1,6), (17,6), (18, 6)]
+
+
+all_paths = pygame.sprite.Group()
+full_paths = pygame.sprite.Group()
+
 #Funciones
 def set_image(type, coord, screen):
     block_img = pygame.image.load(f"mapa/{type}.png").convert_alpha()
@@ -68,6 +92,24 @@ def set_board(screen):
         set_image("BlockDown", posicion, screen)
     for posicion in posiciones_bloque_up:
         set_image("BlockUp", posicion, screen)
-    for posicion in posiciones_camino:
-        set_image("path", posicion, screen)
+    for posicion in posiciones_circulito:
+        path = block.Path(posicion, "circulito")
+        screen.blit(path.image, path.rect)
+        full_paths.add(path)
+        all_paths.add(path)
+    for posicion in posiciones_bola:
+        path = block.Path(posicion, "bola")
+        screen.blit(path.image, path.rect)
+        full_paths.add(path)
+        all_paths.add(path)
+    for posicion in posiciones_none:
+        path = block.Path(posicion, "None")
+        screen.blit(path.image, path.rect)
+        all_paths.add(path)
+
+    set_image("BlockDoor", (9,5), screen)
+
+def set_path(screen):
+    for path in all_paths:
+        screen.blit(path.image, path.rect)
     set_image("BlockDoor", (9,5), screen)
