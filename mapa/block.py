@@ -24,7 +24,7 @@ class Path(pygame.sprite.Sprite):
                 full_paths.remove(path)
             if(path.item == "bola"):
                 for phantom in phantoms:
-                    phantom.setscaredTime(9)
+                    phantom.set_scared_time(9)
             if(len(full_paths) == 0):
                 print("You won!")
                 sys.exit()
