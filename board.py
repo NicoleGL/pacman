@@ -72,11 +72,13 @@ posiciones_bola = [(2,10), (16,2), (4,4), (14, 8)]
 
 posiciones_none = [(9,5), (8,6), (9,6), (10,6), (0,6), (1,6), (17,6), (18, 6)]
 
-posicion_bloques = [(0,0)]
-
-
 all_paths = pygame.sprite.Group()
 full_paths = pygame.sprite.Group()
+special_path = block.Path((9,2), "circulito")
+
+pygame.font.init()
+arial = pygame.font.SysFont("Arial", 26)
+you_won = arial.render("You won!", False, (255,255,255))
 
 #Funciones
 def set_image(type, coord, screen):
@@ -85,19 +87,12 @@ def set_image(type, coord, screen):
     screen.blit(block_img, (coord[0] * 32, coord[1] * 32))
 
 def set_board(screen):
+    
     screen.fill(black)
-#    for posicion in posiciones_bloque_right:
-#        set_image("BlockRight", posicion, screen)
-#    for posicion in posiciones_bloque_left:
-#        set_image("BlockLeft", posicion, screen)
-#    for posicion in posiciones_bloque_down:
-#        set_image("BlockDown", posicion, screen)
-#    for posicion in posiciones_bloque_up:
-#        set_image("BlockUp", posicion, screen)
-    for posicion in posicion_bloques:
-        block_img = pygame.image.load(f"mapa/Bordes.png").convert_alpha()
-        block_img.set_colorkey(black)
-        screen.blit(block_img, (0,0))
+    block_img = pygame.image.load(f"mapa/Bordes.png").convert_alpha()
+    block_img.set_colorkey(black)
+    screen.blit(block_img, (0,0))
+    
     for posicion in posiciones_circulito:
         path = block.Path(posicion, "circulito")
         screen.blit(path.image, path.rect)
@@ -112,6 +107,11 @@ def set_board(screen):
         path = block.Path(posicion, "None")
         screen.blit(path.image, path.rect)
         all_paths.add(path)
+        
+    screen.blit(special_path.image, special_path.rect)
+    full_paths.add(special_path)
+    all_paths.add(special_path)
+    
     lives_img = pygame.image.load("images/3lives.png")
     screen.blit(lives_img, (0,0))
     set_image("BlockDoor", (9,5), screen)
@@ -120,3 +120,22 @@ def set_path(screen):
     for path in all_paths:
         screen.blit(path.image, path.rect)
     set_image("BlockDoor", (9,5), screen)
+    
+
+def update_board(pacman, special_path, full_paths, phantoms, screen):
+    path = pygame.sprite.spritecollideany(pacman, full_paths)
+    if(path):
+        x, y = path.rect.center
+        if(pygame.Rect.collidepoint(pacman.rect, x, y)):
+            path.update_item(None)
+            full_paths.remove(path)
+        if(path.item == "bola"):
+            for phantom in phantoms:
+                phantom.set_scared_time(9)
+        if(len(full_paths) == 0):
+            screen.blit(you_won, (64, 0))
+    if(pygame.sprite.collide_rect(pacman, special_path) and special_path.item == "cherry"):
+        x, y = special_path.rect.center
+        if(pygame.Rect.collidepoint(pacman.rect, x, y)):
+            special_path.update_item(None)
+    special_path.cherry(full_paths)

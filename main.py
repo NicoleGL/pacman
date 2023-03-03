@@ -109,18 +109,12 @@ def main():
         move_sprite(player, speed)
         player.change_animation()
 
-        if (player.rect.x, player.rect.y) in esquinas:
+        if (player.rect.x //32, player.rect.y//32) in esquinas:
             pink.esquina = (player.rect.x, player.rect.y)
-        if pink.posAnt in esquinas:
-            pink.df.at[pink.posAnt, (player.rect.x-pink.posAnt[0],
-                                     player.rect.y-pink.posAnt[1])] += 1
-        pink.posAnt = (player.rect.x, player.rect.y)
-        if (player.rect.x, player.rect.y) in esquinas:
+        if (player.rect.x//32, player.rect.y//32) in esquinas:
             blue.esquina = (player.rect.x, player.rect.y)
-        if blue.posAnt in esquinas:
-            blue.df.at[blue.posAnt, (player.rect.x-blue.posAnt[0],
-                                     player.rect.y-blue.posAnt[1])] += 1
-        blue.posAnt = (player.rect.x, player.rect.y)
+        
+        
 
         for phantom in phantoms:
             phantom.animation2()
@@ -130,7 +124,8 @@ def main():
         collision(player, phantoms)
         if(player.lives != 0):
             draw_sprite(player)
-            block.Path.update_board(player, full_paths, phantoms)
+            update_board(player, special_path, full_paths, phantoms, screen)
+            special_path.cherry(full_paths)
             set_path(screen)
             all_sprite_list.draw(screen)
         
