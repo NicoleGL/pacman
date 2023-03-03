@@ -112,7 +112,8 @@ def set_board(screen):
         path = block.Path(posicion, "None")
         screen.blit(path.image, path.rect)
         all_paths.add(path)
-
+    lives_img = pygame.image.load("images/3lives.png")
+    screen.blit(lives_img, (0,0))
     set_image("BlockDoor", (9,5), screen)
 
 def set_path(screen):

@@ -6,16 +6,19 @@ class Pacman(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.direction = None
         self.next_direction = None
-        self.image = pygame.image.load(f"images/paknam_{self.direction}.png").convert()
+        self.animation = None
+        self.image = pygame.image.load(f"images/paknam_{self.animation}.png").convert()
         self.image.set_colorkey((0, 0, 0))
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
         self.speed = (0, 0)
+        self.tick = 0
+        self.lives = 3
 
 
     def update_img(self):
-        self.image = pygame.image.load(f"images/paknam_{self.direction}.png").convert()
+        self.image = pygame.image.load(f"images/paknam_{self.animation}.png").convert()
         self.image.set_colorkey((0, 0, 0))
 
 
@@ -84,3 +87,14 @@ class Pacman(pygame.sprite.Sprite):
                 self.direction = self.next_direction
                 self.speed = (0, speed)
         self.update_img()
+        
+    
+    def change_animation(self):
+        if(self.speed != (0,0)):
+            if((self.tick % 30 == 0) and (self.tick % 60 != 0)):
+                self.animation = None
+            elif(self.tick % 60 == 0):
+                self.animation = self.direction
+            self.update_img()
+            self.tick += 1
+        
