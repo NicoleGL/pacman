@@ -109,10 +109,17 @@ def main():
         move_sprite(player, speed)
         player.change_animation()
 
-        if (player.rect.x //32, player.rect.y//32) in esquinas:
-            pink.esquina = (player.rect.x, player.rect.y)
         if (player.rect.x//32, player.rect.y//32) in esquinas:
-            blue.esquina = (player.rect.x, player.rect.y)
+            pink.esquina = (player.rect.x//32, player.rect.y//32)
+        if (player.rect.x//32, player.rect.y//32) in esquinas:
+            blue.esquina = (player.rect.x//32, player.rect.y//32)
+        if player.rect.x % 32 == 0 and player.rect.y % 32 == 0:
+            if (pink.pospacAnt in esquinas and (player.rect.x//32, player.rect.y//32) != pink.pospacAnt):
+                pink.df.at[pink.pospacAnt, (player.rect.x//32 - pink.pospacAnt[0], player.rect.y//32 - pink.pospacAnt[1])] += 1
+            if (blue.pospacAnt in esquinas and (player.rect.x//32, player.rect.y//32) != blue.pospacAnt):
+                blue.df.at[blue.pospacAnt, (player.rect.x//32 - blue.pospacAnt[0], player.rect.y//32 - blue.pospacAnt[1])] += 1
+        pink.pospacAnt = (player.rect.x//32, player.rect.y//32)
+        blue.pospacAnt = (player.rect.x//32, player.rect.y//32)
         
         
 
