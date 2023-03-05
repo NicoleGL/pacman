@@ -19,7 +19,7 @@ class Ghost(pygame.sprite.Sprite):
         self.y = y
         self.rect.x = x
         self.rect.y = y
-        self.dire = (0,0)
+        self.dire = (0,0)  #HAY QUE CAMBIARLO A NSEO
         self.pospacAnt = (9,8)
         self.counter = 0
 
@@ -73,7 +73,7 @@ class Ghost(pygame.sprite.Sprite):
             self.counter += 1
         else:
             if self.rect.x%32 == 0 and self.rect.y%32 == 0:
-                velocity = Ghost.asustado(self.dire, box, ((self.rect.x)//32, (self.rect.y)//32), pospac)
+                velocity = Ghost.asustado(box, ((self.rect.x)//32, (self.rect.y)//32), pospac)
                 self.rect.x += velocity[0]
                 self.rect.y += velocity[1]
                 self.dire = velocity
@@ -218,7 +218,6 @@ class Ghost(pygame.sprite.Sprite):
                     return (0,0)
                 return Ghost.rojo(counter, dire, box, pos, Ghost.casillaFinal(pospac, velocity))
             else:
-                print("dkas") 
                 lista = list(dic.values())
                 menor = False
                 count = 0
@@ -282,12 +281,15 @@ class Ghost(pygame.sprite.Sprite):
                 if menor == True:
                     lista.remove(lista[i-count+1])
                 menor = False
+            if lista == []:
+                while sinSalida(box, (pos[0]+velocity[0], pos[1]+velocity[1]), velocity, pospac):
+                    velocity = list(dic.keys())[list(dic.values()).index(random.choice([dic[(1,0)], dic[(-1,0)], dic[(0,1)], dic[(0,-1)]]))]
+                    break
             velocity = list(dic.keys())[list(dic.values()).index(lista[0])]
             dic.pop(velocity)
             lista = list(dic.values())
             count = 0
-            if ((pos[0]+velocity[0], pos[1]+velocity[1]) in box and 
-                Ghost.sinSalida(box, (pos[0]+velocity[0], pos[1]+velocity[1]), velocity, pospac) == False and velocity != (-dire[0], -dire[1])):
+            if Ghost.sinSalida(box, (pos[0]+velocity[0], pos[1]+velocity[1]), velocity, pospac) == False:
                 break
         return velocity 
             
