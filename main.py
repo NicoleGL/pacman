@@ -59,7 +59,8 @@ def collision(pacman, phantoms):
             phantom.rect.y = phantom.y
             phantom.scaredTime = 790 #esto será 0 cuando los fantasmas se muevan
         else:
-            player.lives -= 1
+            if player.lives > 0:
+                player.lives -= 1
             lives_img = pygame.image.load(f"images/{player.lives}lives.png")
             screen.blit(lives_img, (0,0))
             player.rect.x = 9*32
@@ -113,7 +114,8 @@ def main():
             pink.esquina = (player.rect.x//32, player.rect.y//32)
         if (player.rect.x//32, player.rect.y//32) in esquinas:
             blue.esquina = (player.rect.x//32, player.rect.y//32)
-        if player.rect.x % 32 == 0 and player.rect.y % 32 == 0:
+        if player.rect.x % 32 == 0 and player.rect.y % 32 == 0 and (player.rect.x//32 - blue.pospacAnt[0], player.rect.y//32 - 
+            blue.pospacAnt[1]) in [(1,0), (-1,0), (0,1), (0,-1)]:
             if (pink.pospacAnt in esquinas and (player.rect.x//32, player.rect.y//32) != pink.pospacAnt):
                 pink.df.at[pink.pospacAnt, (player.rect.x//32 - pink.pospacAnt[0], player.rect.y//32 - pink.pospacAnt[1])] += 1
             if (blue.pospacAnt in esquinas and (player.rect.x//32, player.rect.y//32) != blue.pospacAnt):
@@ -126,7 +128,7 @@ def main():
         for phantom in phantoms:
             phantom.animation2()
             phantom.imScared()
-            # phantom.moveGhost(posiciones_camino, player.rect.center)
+            phantom.moveGhost(posiciones_camino, player.rect.center)
 
         collision(player, phantoms)
         if(player.lives != 0):
