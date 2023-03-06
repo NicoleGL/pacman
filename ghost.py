@@ -258,7 +258,7 @@ class Ghost(pygame.sprite.Sprite):
             return Ghost.rosa(counter, dire, box, pos, df, pospac, esquina)
 
 
-    def asustado (dire, box, pos, pospac):
+    def asustado (box, pos, pospac):
         velocity = (0,0)
         dic = {
             (1,0): Ghost.distance((pos[0]+1, pos[1]), pospac), 
