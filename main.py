@@ -26,10 +26,10 @@ esquinas = [(2, 2), (2, 4), (2, 6), (2, 8), (2, 10), (4, 4), (4, 6), (4, 8), (6,
 # Sprites
 player = Pacman(9*32, 8*32)
 
-blue = Ghost("Blue", 1, "N", 32 * 0, 32 * 6)
-pink = Ghost("Pink", 1, "N", 32 * 9, 32 * 6)
-orange = Ghost("Orange", 1, "N", 32 * 10, 32 * 6)
-red = Ghost("Red", 1, "N", 32 * 9, 32 * 5)
+blue = Ghost("Blue", 1, "N", (32 * 8, 32 * 6))
+pink = Ghost("Pink", 1, "N", (32 * 9, 32 * 6))
+orange = Ghost("Orange", 1, "N", (32 * 10, 32 * 6))
+red = Ghost("Red", 1, "N", (32 * 9, 32 * 5))
 phantoms = pygame.sprite.Group()
 phantoms.add(blue, pink, orange, red)
 all_sprite_list = pygame.sprite.Group()
@@ -47,17 +47,16 @@ def move_sprite(spr, speed):
     if (spr == player):
         player.move_if_possible(speed)
         player.stop_if_wall()
-    spr.rect.x += spr.speed[0]
-    spr.rect.y += spr.speed[1]
+    spr.rect.x += spr.speed[0]*2
+    spr.rect.y += spr.speed[1]*2
     
 
 def collision(pacman, phantoms):
     phantom = pygame.sprite.spritecollideany(pacman, phantoms)
     if (phantom):
         if (phantom.scaredTime != 0):  # fantasma asustado
-            phantom.rect.x = phantom.x
-            phantom.rect.y = phantom.y
-            phantom.scaredTime = 790 #esto será 0 cuando los fantasmas se muevan
+            phantom.change_mood("Eyes")
+            phantom.scaredTime = 3001
         else:
             if player.lives > 0:
                 player.lives -= 1
@@ -122,13 +121,17 @@ def main():
                 blue.df.at[blue.pospacAnt, (player.rect.x//32 - blue.pospacAnt[0], player.rect.y//32 - blue.pospacAnt[1])] += 1
         pink.pospacAnt = (player.rect.x//32, player.rect.y//32)
         blue.pospacAnt = (player.rect.x//32, player.rect.y//32)
+        for phantom in phantoms:
+            if (phantom.rect.x, phantom.rect.y) == phantom.posInicial:
+                phantom.scaredTime = 0
+                phantom.change_mood(phantom.name)
         
         
 
         for phantom in phantoms:
             phantom.animation2()
             phantom.imScared()
-            phantom.moveGhost(posiciones_camino, player.rect.center)
+            phantom.moveGhost(posiciones_camino, (player.rect.x//32, player.rect.y//32))
 
         collision(player, phantoms)
         if(player.lives != 0):

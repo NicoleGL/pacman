@@ -2,7 +2,7 @@ import pygame, math, random, pandas as pd
 
 yellow = (255, 255, 0)
 class Ghost(pygame.sprite.Sprite):
-    def __init__(self, color, number, direction, x, y):
+    def __init__(self, color, number, direction, posInicial):
         pygame.sprite.Sprite.__init__(self)
         self.number = number
         self.color = color
@@ -15,11 +15,10 @@ class Ghost(pygame.sprite.Sprite):
         self.scaredTime = 0
         
         self.rect = self.image.get_rect()
-        self.x = x
-        self.y = y
-        self.rect.x = x
-        self.rect.y = y
-        self.dire = (0,0)  #HAY QUE CAMBIARLO A NSEO
+        self.posInicial = posInicial
+        self.rect.x = posInicial[0]
+        self.rect.y = posInicial[1]
+        self.dire = (0,0)
         self.pospacAnt = (9,8)
         self.counter = 0
 
@@ -33,50 +32,67 @@ class Ghost(pygame.sprite.Sprite):
     def moveGhost(self, box, pospac):
         if self.color == "Red":
             if self.rect.x%32 == 0 and self.rect.y%32 == 0:
-                velocity = Ghost.rojo(self.counter, self.dire, box, ((self.rect.x)//32, (self.rect.y)//32), pospac)
+                velocity = Ghost.rojo(self.scaredTime, self.counter, self.dire, box, ((self.rect.x)//32, (self.rect.y)//32), pospac)
                 self.rect.x += velocity[0]
                 self.rect.y += velocity[1]
                 self.dire = velocity
+                self.direction = Ghost.change_direction(velocity)
             else:
                 self.rect.x += self.dire[0]
                 self.rect.y += self.dire[1]
             self.counter += 1
         elif self.color == "Orange":
             if self.rect.x%32 == 0 and self.rect.y%32 == 0:
-                velocity = Ghost.naranja(self.counter, self.dire, box, ((self.rect.x)//32, (self.rect.y)//32), pospac)
+                velocity = Ghost.naranja(self.scaredTime, self.counter, self.dire, box, ((self.rect.x)//32, (self.rect.y)//32), pospac)
                 self.rect.x += velocity[0]
                 self.rect.y += velocity[1]
                 self.dire = velocity
+                self.direction = Ghost.change_direction(velocity)
             else:
                 self.rect.x += self.dire[0]
                 self.rect.y += self.dire[1]
             self.counter += 1
         elif self.color == "Pink":
             if self.rect.x%32 == 0 and self.rect.y%32 == 0:
-                velocity = Ghost.rosa(self.counter, self.dire, box, ((self.rect.x)//32, (self.rect.y)//32), self.df, pospac, self.esquina)
+                velocity = Ghost.rosa(self.scaredTime, self.counter, self.dire, box, ((self.rect.x)//32, (self.rect.y)//32), self.df, pospac, self.esquina)
                 self.rect.x += velocity[0]
                 self.rect.y += velocity[1]
                 self.dire = velocity
+                self.direction = Ghost.change_direction(velocity)
             else:
                 self.rect.x += self.dire[0]
                 self.rect.y += self.dire[1]
             self.counter += 1
         elif self.color == "Blue":
             if self.rect.x%32 == 0 and self.rect.y%32 == 0:
-                velocity = Ghost.azul(self.counter, self.dire, box, ((self.rect.x)//32, (self.rect.y)//32), self.df, pospac, self.esquina)
+                velocity = Ghost.azul(self.scaredTime, self.counter, self.dire, box, ((self.rect.x)//32, (self.rect.y)//32), self.df, pospac, self.esquina)
                 self.rect.x += velocity[0]
                 self.rect.y += velocity[1]
                 self.dire = velocity
+                self.direction = Ghost.change_direction(velocity)
+            else:
+                self.rect.x += self.dire[0]
+                self.rect.y += self.dire[1]
+            self.counter += 1
+        elif self.color == "ScaredW" or self.color == "ScaredB":
+            if self.rect.x%32 == 0 and self.rect.y%32 == 0:
+                velocity = Ghost.asustado(box, ((self.rect.x)//32, (self.rect.y)//32), pospac)
+                self.rect.x += velocity[0]
+                self.rect.y += velocity[1]
+                self.dire = velocity
+                self.direction = Ghost.change_direction(velocity)
             else:
                 self.rect.x += self.dire[0]
                 self.rect.y += self.dire[1]
             self.counter += 1
         else:
             if self.rect.x%32 == 0 and self.rect.y%32 == 0:
-                velocity = Ghost.asustado(box, ((self.rect.x)//32, (self.rect.y)//32), pospac)
+                velocity = Ghost.muerto(self.scaredTime, self.counter, self.dire, box, ((self.rect.x)//32, (self.rect.y)//32),
+                (self.posInicial[0]//32, self.posInicial[1]//32))
                 self.rect.x += velocity[0]
                 self.rect.y += velocity[1]
                 self.dire = velocity
+                self.direction = Ghost.change_direction(velocity)
             else:
                 self.rect.x += self.dire[0]
                 self.rect.y += self.dire[1]
@@ -127,11 +143,12 @@ class Ghost(pygame.sprite.Sprite):
         return velocity
 
 
-    def rojo (counter, dire, box, pos, pospac):
-        if pos == (9,6) or pos == (9,5):
-            return (0,-1)
-        elif pos == (9,4):
-            return (random.choice([-1,1]), 0)
+    def rojo (scaredTime, counter, dire, box, pos, pospac):
+        if scaredTime <= 3000:
+            if pos == (9,6) or pos == (9,5):
+                return (0,-1)
+            elif pos == (9,4):
+                return (random.choice([-1,1]), 0)
 
         if counter <= 720:
             return Ghost.alAzar(dire, box, pos, pospac)
@@ -161,13 +178,17 @@ class Ghost(pygame.sprite.Sprite):
             dic.pop(velocity)
             lista = list(dic.values())
             count = 0
-            if ((pos[0]+velocity[0], pos[1]+velocity[1]) in box and 
-                Ghost.sinSalida(box, (pos[0]+velocity[0], pos[1]+velocity[1]), velocity, pospac) == False and velocity != (-dire[0], -dire[1])):
-                break
+            if scaredTime <= 3000:
+                if ((pos[0]+velocity[0], pos[1]+velocity[1]) in box and 
+                    Ghost.sinSalida(box, (pos[0]+velocity[0], pos[1]+velocity[1]), velocity, pospac) == False and velocity != (-dire[0], -dire[1])):
+                    break
+            else:
+                if ((pos[0]+velocity[0], pos[1]+velocity[1]) in box and velocity != (-dire[0], -dire[1])):
+                    break
         return velocity 
 
     
-    def naranja (counter, dire, box, pos, pospac):
+    def naranja (scaredTime, counter, dire, box, pos, pospac):
         velocity = (0,0)
         if pos == (10,6):
             return (-1,0)
@@ -180,13 +201,13 @@ class Ghost(pygame.sprite.Sprite):
             return Ghost.alAzar(dire, box, pos, pospac)
         #Si la distancia a pacman es menor que 3 casillas sigue como el rojo
         if Ghost.distance(pos, pospac) <= 3:
-            return Ghost.rojo (counter, dire, box, pos, pospac)
+            return Ghost.rojo (scaredTime, counter, dire, box, pos, pospac)
         #Si no, hasta que la casilla elegida sea del camino y no lleve a sinSalida, elige una dirección al azar
         else:
             return Ghost.alAzar (dire, box, pos, pospac)
 
 
-    def rosa (counter, dire, box, pos, df, pospac, esquina):
+    def rosa (scaredTime, counter, dire, box, pos, df, pospac, esquina):
         #Si pacman está en una de las casillas que hace esquina o intersección entre caminos
         if pos == (9,6) or pos == (9,5):
             return (0,-1)
@@ -216,7 +237,7 @@ class Ghost(pygame.sprite.Sprite):
                     velocity = (0,0)
                 if pos == Ghost.casillaFinal(pospac, velocity):
                     return (0,0)
-                return Ghost.rojo(counter, dire, box, pos, Ghost.casillaFinal(pospac, velocity))
+                return Ghost.rojo(scaredTime, counter, dire, box, pos, Ghost.casillaFinal(pospac, velocity))
             else:
                 lista = list(dic.values())
                 menor = False
@@ -235,12 +256,12 @@ class Ghost(pygame.sprite.Sprite):
                     menor = False
                 if pos == Ghost.casillaFinal(pospac, list(dic.keys())[list(dic.values()).index(lista[0])]):
                     return (0,0)
-                return Ghost.rojo(counter, dire, box, pos, Ghost.casillaFinal(pospac, list(dic.keys())[list(dic.values()).index(lista[0])]))
+                return Ghost.rojo(scaredTime, counter, dire, box, pos, Ghost.casillaFinal(pospac, list(dic.keys())[list(dic.values()).index(lista[0])]))
         else:
-            return Ghost.rojo(counter, dire, box, pos, esquina)
+            return Ghost.rojo(scaredTime, counter, dire, box, pos, esquina)
 
 
-    def azul (counter, dire, box, pos, df, pospac, esquina):
+    def azul (scaredTime, counter, dire, box, pos, df, pospac, esquina):
         num = random.choice([0,1,2])
         if pos == (8,6):
             return (1,0)
@@ -251,11 +272,11 @@ class Ghost(pygame.sprite.Sprite):
         if counter <= 720:
             return Ghost.alAzar(dire, box, pos, pospac)
         if num == 0:
-            return Ghost.rojo(counter, dire, box, pos, pospac)
+            return Ghost.rojo(scaredTime, counter, dire, box, pos, pospac)
         elif num == 1:
-            return Ghost.naranja(counter, dire, box, pos, pospac)
+            return Ghost.naranja(scaredTime, counter, dire, box, pos, pospac)
         else:
-            return Ghost.rosa(counter, dire, box, pos, df, pospac, esquina)
+            return Ghost.rosa(scaredTime, counter, dire, box, pos, df, pospac, esquina)
 
 
     def asustado (box, pos, pospac):
@@ -292,6 +313,10 @@ class Ghost(pygame.sprite.Sprite):
             if Ghost.sinSalida(box, (pos[0]+velocity[0], pos[1]+velocity[1]), velocity, pospac) == False:
                 break
         return velocity 
+
+
+    def muerto (scaredTime, counter, dire, box, pos, posInicial):
+        return Ghost.rojo(scaredTime, counter, dire, box, pos, posInicial)
             
             
     def set_scared_time(self, number1):
@@ -314,9 +339,15 @@ class Ghost(pygame.sprite.Sprite):
         self.image = pygame.image.load(name).convert()
         self.image.set_colorkey(yellow)
 
-    def change_direction(self, newdirection):
-        self.newdirection = newdirection
-        self.direction = newdirection     
+    def change_direction(newdirection):
+        if newdirection == (1,0):
+            return "E"
+        elif newdirection == (-1,0):
+            return "W"
+        elif newdirection == (0,1):
+            return "S"
+        else:
+            return "N"
 
     def animation2(self):
         self.delay()
