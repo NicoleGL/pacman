@@ -5,6 +5,7 @@ pygame.init()
 class Path(pygame.sprite.Sprite):
     def __init__(self, coords, item):
         pygame.sprite.Sprite.__init__(self)
+        self.og_item = item
         self.item = item
         self.image = pygame.image.load(f"mapa/path_{item}.png")
         self.rect = self.image.get_rect()

@@ -1,9 +1,7 @@
 import pygame
-import sys
 from pygame.locals import *
 from pacman import *
 from board import *
-from mapa import block
 from ghost import Ghost
 
 # Pantalla
@@ -58,16 +56,12 @@ def collision(pacman, phantoms):
             phantom.change_mood("Eyes")
             phantom.scaredTime = 3001
         else:
-            if player.lives > 0:
-                player.lives -= 1
-            lives_img = pygame.image.load(f"images/{player.lives}lives.png")
+            if pacman.lives > 0:
+                pacman.lives -= 1
+            lives_img = pygame.image.load(f"images/{pacman.lives}lives.png")
             screen.blit(lives_img, (0,0))
-            player.rect.x = 9*32
-            player.rect.y = 8*32
-            player.speed = (0,0)
-            player.direction = None
-            player.next_direction = None
-            if(player.lives == 0):
+            reset_sprites(pacman, phantoms)
+            if(pacman.lives == 0):
                 pygame.event.post(pygame.event.Event(GAME_OVER))
                 
 
@@ -97,7 +91,7 @@ def main():
                 elif event.key == K_SPACE:
                     if(player.lives == 0):
                         player.lives = 3
-                        set_board(screen)
+                        set_board_again(screen, player, phantoms)
                         all_sprite_list.draw(screen)
 
             elif event.type == GAME_OVER:
@@ -136,8 +130,8 @@ def main():
         collision(player, phantoms)
         if(player.lives != 0):
             draw_sprite(player)
-            update_board(player, special_path, full_paths, phantoms, screen)
-            special_path.cherry(full_paths)
+            update_board(player, special_path, currently_full_paths, phantoms, screen)
+            special_path.cherry(currently_full_paths)
             set_path(screen)
             all_sprite_list.draw(screen)
         
