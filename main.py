@@ -1,9 +1,7 @@
 import pygame
-import sys
 from pygame.locals import *
 from pacman import *
 from board import *
-from mapa import block
 from ghost import Ghost
 
 # Pantalla
@@ -47,8 +45,8 @@ def move_sprite(spr, speed):
     if (spr == player):
         player.move_if_possible(speed)
         player.stop_if_wall()
-    spr.rect.x += spr.speed[0]*2
-    spr.rect.y += spr.speed[1]*2
+    spr.rect.x += spr.speed[0]
+    spr.rect.y += spr.speed[1]
     
 
 def collision(pacman, phantoms):
@@ -58,16 +56,10 @@ def collision(pacman, phantoms):
             phantom.change_mood("Eyes")
             phantom.scaredTime = 3001
         else:
-            if player.lives > 0:
-                player.lives -= 1
-            lives_img = pygame.image.load(f"images/{player.lives}lives.png")
-            screen.blit(lives_img, (0,0))
-            player.rect.x = 9*32
-            player.rect.y = 8*32
-            player.speed = (0,0)
-            player.direction = None
-            player.next_direction = None
-            if(player.lives == 0):
+            if pacman.lives > 0:
+                pacman.lives -= 1
+            reset_sprites(pacman, phantoms)
+            if(pacman.lives == 0):
                 pygame.event.post(pygame.event.Event(GAME_OVER))
                 
 
@@ -78,13 +70,12 @@ all_sprite_list.draw(screen)
 def main():
     run = True
     speed = 1  # Debe ser una potencia de 2
-    
 
     while run:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-            elif event.type == pygame.KEYDOWN:
+            if event.type == pygame.KEYDOWN:
 
                 if event.key == K_UP:
                     player.next_direction = "up"
@@ -94,15 +85,32 @@ def main():
                     player.next_direction = "left"
                 elif event.key == K_RIGHT:
                     player.next_direction = "right"
-                elif event.key == K_SPACE:
-                    if(player.lives == 0):
-                        player.lives = 3
-                        set_board(screen)
-                        all_sprite_list.draw(screen)
 
-            elif event.type == GAME_OVER:
-                bg_img = pygame.image.load("images/game_over.png")
-                screen.blit(bg_img, (0,0))
+
+            if event.type == GAME_OVER:
+                game_over_screen(screen)
+                
+            if event.type == MOUSEMOTION:
+                if(player.lives == 0):
+                    x, y = event.pos
+                    if(pygame.Rect.collidepoint(retry_button.rect, x, y)):
+                        retry_button.hover(screen)    
+                    elif(pygame.Rect.collidepoint(exit_button.rect, x, y)):
+                        exit_button.hover(screen)
+                    else:
+                        retry_button.antihover(screen)
+                        exit_button.antihover(screen)
+                        
+            if event.type == MOUSEBUTTONDOWN:
+                if(player.lives == 0):
+                    x, y = event.pos
+                    if(pygame.Rect.collidepoint(retry_button.rect, x, y)):
+                        player.lives = 3
+                        retry_button.antihover(screen)
+                        set_board_again(screen, player, phantoms)
+                        all_sprite_list.draw(screen)
+                    elif(pygame.Rect.collidepoint(exit_button.rect, x, y)):
+                        run = False
                 
                 
                 
@@ -136,8 +144,8 @@ def main():
         collision(player, phantoms)
         if(player.lives != 0):
             draw_sprite(player)
-            update_board(player, special_path, full_paths, phantoms, screen)
-            special_path.cherry(full_paths)
+            update_board(player, special_path, currently_full_paths, phantoms, screen)
+            special_path.cherry(currently_full_paths)
             set_path(screen)
             all_sprite_list.draw(screen)
         

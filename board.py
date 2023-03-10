@@ -1,5 +1,6 @@
 import pygame
 from mapa import block
+from button import Button
 
 #Constantes
 yellow = pygame.Color(255, 242, 0)
@@ -74,11 +75,17 @@ posiciones_none = [(9,5), (8,6), (9,6), (10,6), (0,6), (1,6), (17,6), (18, 6)]
 
 all_paths = pygame.sprite.Group()
 full_paths = pygame.sprite.Group()
+currently_full_paths = pygame.sprite.Group()
 special_path = block.Path((9,2), "circulito")
 
 pygame.font.init()
 arial = pygame.font.SysFont("Arial", 26)
 you_won = arial.render("You won!", False, (255,255,255))
+
+bg_img = pygame.image.load("mapa/game_over.png")
+retry_button = Button("retry", 5*32, 7*32)
+exit_button = Button("exit", 11*32, 7*32)
+
 
 #Funciones
 def set_image(type, coord, screen):
@@ -97,11 +104,13 @@ def set_board(screen):
         path = block.Path(posicion, "circulito")
         screen.blit(path.image, path.rect)
         full_paths.add(path)
+        currently_full_paths.add(path)
         all_paths.add(path)
     for posicion in posiciones_bola:
         path = block.Path(posicion, "bola")
         screen.blit(path.image, path.rect)
         full_paths.add(path)
+        currently_full_paths.add(path)
         all_paths.add(path)
     for posicion in posiciones_none:
         path = block.Path(posicion, "None")
@@ -110,11 +119,13 @@ def set_board(screen):
         
     screen.blit(special_path.image, special_path.rect)
     full_paths.add(special_path)
+    currently_full_paths.add(special_path)
     all_paths.add(special_path)
     
     lives_img = pygame.image.load("images/3lives.png")
     screen.blit(lives_img, (0,0))
     set_image("BlockDoor", (9,5), screen)
+
 
 def set_path(screen):
     for path in all_paths:
@@ -122,20 +133,54 @@ def set_path(screen):
     set_image("BlockDoor", (9,5), screen)
     
 
-def update_board(pacman, special_path, full_paths, phantoms, screen):
-    path = pygame.sprite.spritecollideany(pacman, full_paths)
+def update_board(pacman, special_path, currently_full_paths, phantoms, screen):
+    path = pygame.sprite.spritecollideany(pacman, currently_full_paths)
     if(path):
         x, y = path.rect.center
         if(pygame.Rect.collidepoint(pacman.rect, x, y)):
+            if(path.item == "bola"):
+                for phantom in phantoms:
+                    phantom.set_scared_time(9)
             path.update_item(None)
-            full_paths.remove(path)
-        if(path.item == "bola"):
-            for phantom in phantoms:
-                phantom.set_scared_time(9)
-        if(len(full_paths) == 0):
+            currently_full_paths.remove(path)
+        if(len(currently_full_paths) == 0):
             screen.blit(you_won, (64, 0))
     if(pygame.sprite.collide_rect(pacman, special_path) and special_path.item == "cherry"):
         x, y = special_path.rect.center
         if(pygame.Rect.collidepoint(pacman.rect, x, y)):
             special_path.update_item(None)
-    special_path.cherry(full_paths)
+    special_path.cherry(currently_full_paths)
+    lives_img = pygame.image.load(f"images/{pacman.lives}lives.png")
+    screen.blit(lives_img, (0,0))
+    
+def set_board_again(screen, pacman, phantoms):  
+    screen.fill(black)
+    block_img = pygame.image.load(f"mapa/Bordes.png").convert_alpha()
+    screen.blit(block_img, (0,0))
+    for path in full_paths:
+        if not path in currently_full_paths:
+            currently_full_paths.add(path)
+            path.update_item(path.og_item)
+    reset_sprites(pacman, phantoms)
+    lives_img = pygame.image.load("images/3lives.png")
+    screen.blit(lives_img, (0,0))
+    set_image("BlockDoor", (9,5), screen)
+        
+        
+def reset_sprites(pacman, phantoms):
+    for phantom in phantoms:
+        phantom.scaredTime = 0
+        phantom.rect.x = phantom.posInicial[0]
+        phantom.rect.y = phantom.posInicial[1]
+    pacman.direction = None
+    pacman.next_direction = None
+    pacman.rect.x = pacman.x
+    pacman.rect.y = pacman.y
+    pacman.speed = (0, 0)
+        
+
+def game_over_screen(screen):
+
+    screen.blit(bg_img, (0,0))
+    retry_button.draw(screen)
+    exit_button.draw(screen)
