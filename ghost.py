@@ -303,7 +303,7 @@ class Ghost(pygame.sprite.Sprite):
                     lista.remove(lista[i-count+1])
                 menor = False
             if lista == []:
-                while sinSalida(box, (pos[0]+velocity[0], pos[1]+velocity[1]), velocity, pospac):
+                while Ghost.sinSalida(box, (pos[0]+velocity[0], pos[1]+velocity[1]), velocity, pospac):
                     velocity = list(dic.keys())[list(dic.values()).index(random.choice([dic[(1,0)], dic[(-1,0)], dic[(0,1)], dic[(0,-1)]]))]
                     break
             velocity = list(dic.keys())[list(dic.values()).index(lista[0])]

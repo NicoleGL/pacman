@@ -1,5 +1,6 @@
 import pygame
 from mapa import block
+from button import Button
 
 #Constantes
 yellow = pygame.Color(255, 242, 0)
@@ -81,6 +82,11 @@ pygame.font.init()
 arial = pygame.font.SysFont("Arial", 26)
 you_won = arial.render("You won!", False, (255,255,255))
 
+bg_img = pygame.image.load("mapa/game_over.png")
+retry_button = Button("retry", 5*32, 7*32)
+exit_button = Button("exit", 11*32, 7*32)
+
+
 #Funciones
 def set_image(type, coord, screen):
     block_img = pygame.image.load(f"mapa/{type}.png").convert_alpha()
@@ -144,7 +150,8 @@ def update_board(pacman, special_path, currently_full_paths, phantoms, screen):
         if(pygame.Rect.collidepoint(pacman.rect, x, y)):
             special_path.update_item(None)
     special_path.cherry(currently_full_paths)
-  
+    lives_img = pygame.image.load(f"images/{pacman.lives}lives.png")
+    screen.blit(lives_img, (0,0))
     
 def set_board_again(screen, pacman, phantoms):  
     screen.fill(black)
@@ -163,12 +170,17 @@ def set_board_again(screen, pacman, phantoms):
 def reset_sprites(pacman, phantoms):
     for phantom in phantoms:
         phantom.scaredTime = 0
-        phantom.rect.x = phantom.x
-        phantom.rect.y = phantom.y
+        phantom.rect.x = phantom.posInicial[0]
+        phantom.rect.y = phantom.posInicial[1]
     pacman.direction = None
     pacman.next_direction = None
     pacman.rect.x = pacman.x
     pacman.rect.y = pacman.y
     pacman.speed = (0, 0)
         
-    
+
+def game_over_screen(screen):
+
+    screen.blit(bg_img, (0,0))
+    retry_button.draw(screen)
+    exit_button.draw(screen)
