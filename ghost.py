@@ -27,6 +27,7 @@ class Ghost(pygame.sprite.Sprite):
         (16,4),(16,6),(16,8),(16,10)], columns=[(1,0), (-1,0), (0,1), (0,-1)])
         self.esquina = (9,8)
 
+        Ghost.level = 1
 
 
     def moveGhost(self, box, pospac):

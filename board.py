@@ -1,6 +1,7 @@
 import pygame
 from mapa import block
 from button import Button
+from ghost import Ghost
 
 #Constantes
 yellow = pygame.Color(255, 242, 0)
@@ -80,7 +81,7 @@ special_path = block.Path((9,2), "circulito")
 
 pygame.font.init()
 arial = pygame.font.SysFont("Arial", 26)
-you_won = arial.render("You won!", False, (255,255,255))
+
 
 bg_img = pygame.image.load("mapa/game_over.png")
 retry_button = Button("retry", 5*32, 7*32)
@@ -125,6 +126,8 @@ def set_board(screen):
     lives_img = pygame.image.load("images/3lives.png")
     screen.blit(lives_img, (0,0))
     set_image("BlockDoor", (9,5), screen)
+    
+    update_level(screen)
 
 
 def set_path(screen):
@@ -132,6 +135,9 @@ def set_path(screen):
         screen.blit(path.image, path.rect)
     set_image("BlockDoor", (9,5), screen)
     
+def update_level(screen):
+    level_msg = arial.render(f"Lvl: {Ghost.level}", False, (255,255,255))
+    screen.blit(level_msg, (70, 0))
 
 def update_board(pacman, special_path, currently_full_paths, phantoms, screen):
     path = pygame.sprite.spritecollideany(pacman, currently_full_paths)
@@ -143,8 +149,9 @@ def update_board(pacman, special_path, currently_full_paths, phantoms, screen):
                     phantom.set_scared_time(9)
             path.update_item(None)
             currently_full_paths.remove(path)
-        if(len(currently_full_paths) == 0):
-            screen.blit(you_won, (64, 0))
+        if(len(currently_full_paths) == 0): #Has ganado el juego!!
+            Ghost.level += 1
+            set_board_again(screen, pacman, phantoms)
     if(pygame.sprite.collide_rect(pacman, special_path) and special_path.item == "cherry"):
         x, y = special_path.rect.center
         if(pygame.Rect.collidepoint(pacman.rect, x, y)):
@@ -152,6 +159,7 @@ def update_board(pacman, special_path, currently_full_paths, phantoms, screen):
     special_path.cherry(currently_full_paths)
     lives_img = pygame.image.load(f"images/{pacman.lives}lives.png")
     screen.blit(lives_img, (0,0))
+    
     
 def set_board_again(screen, pacman, phantoms):  
     screen.fill(black)
@@ -165,6 +173,7 @@ def set_board_again(screen, pacman, phantoms):
     lives_img = pygame.image.load("images/3lives.png")
     screen.blit(lives_img, (0,0))
     set_image("BlockDoor", (9,5), screen)
+    update_level(screen)
         
         
 def reset_sprites(pacman, phantoms):
@@ -180,7 +189,6 @@ def reset_sprites(pacman, phantoms):
         
 
 def game_over_screen(screen):
-
     screen.blit(bg_img, (0,0))
     retry_button.draw(screen)
     exit_button.draw(screen)

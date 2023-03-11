@@ -11,6 +11,9 @@ WIDTH = 608
 HEIGHT = 384
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Pak-Nam")
+icon = pygame.image.load("Sprites/Red/RedPhant1E.png")
+icon.set_colorkey((255,255,0))
+pygame.display.set_icon(icon)
 FPS = 120
 
 
