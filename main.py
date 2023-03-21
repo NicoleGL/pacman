@@ -110,6 +110,7 @@ def main():
                     if(pygame.Rect.collidepoint(retry_button.rect, x, y)):
                         player.lives = 3
                         retry_button.antihover(screen)
+                        Ghost.level = 1
                         set_board_again(screen, player, phantoms)
                         all_sprite_list.draw(screen)
                     elif(pygame.Rect.collidepoint(exit_button.rect, x, y)):
