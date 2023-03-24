@@ -55,6 +55,7 @@ arial = pygame.font.SysFont("Arial", 26)
 bg_img = pygame.image.load("mapa/game_over.png")
 retry_button = Button("retry", 5*32, 7*32)
 exit_button = Button("exit", 11*32, 7*32)
+score_cleaner = pygame.image.load("mapa/ScoreCleaner.png")
 
 
 #Funciones
@@ -108,6 +109,13 @@ def update_level(screen):
     level_msg = arial.render(f"Lvl: {Ghost.level}", False, (255,255,255))
     screen.blit(level_msg, (70, 0))
 
+def update_score(screen, point, pacman):
+    pacman.score += point
+    score_num = arial.render(f"{pacman.score}", False, white)
+    screen.blit(score_cleaner, (16*32,10))
+    screen.blit(score_num, (16*32,10))
+
+
 def update_board(pacman, special_path, currently_full_paths, phantoms, screen):
     path = pygame.sprite.spritecollideany(pacman, currently_full_paths)
     if(path):
@@ -115,7 +123,13 @@ def update_board(pacman, special_path, currently_full_paths, phantoms, screen):
         if(pygame.Rect.collidepoint(pacman.rect, x, y)):
             if(path.item == "bola"):
                 for phantom in phantoms:
-                    phantom.set_scared_time(9)
+                    if(phantom.scaredTime < 3000):
+                        phantom.set_scared_time(9)
+                Ghost.numero_fantasmas = -1
+                update_score(screen, 50, pacman)
+                
+            elif(path.item == "circulito"):
+                update_score(screen, 10, pacman)
             path.update_item(None)
             currently_full_paths.remove(path)
         if(len(currently_full_paths) == 0): #Has ganado el juego!!
@@ -124,6 +138,7 @@ def update_board(pacman, special_path, currently_full_paths, phantoms, screen):
     if(pygame.sprite.collide_rect(pacman, special_path) and special_path.item == "cherry"):
         x, y = special_path.rect.center
         if(pygame.Rect.collidepoint(pacman.rect, x, y)):
+            update_score(screen, 100, pacman)
             special_path.update_item(None)
     special_path.cherry(currently_full_paths)
     lives_img = pygame.image.load(f"images/{pacman.lives}lives.png")

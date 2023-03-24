@@ -17,7 +17,7 @@ class Pacman(pygame.sprite.Sprite):
         self.speed = (0, 0)
         self.tick = 0
         self.lives = 3
-        self.score = 0
+        self.score = -10
 
 
     def update_img(self):
