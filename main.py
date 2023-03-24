@@ -35,13 +35,19 @@ phantoms = pygame.sprite.Group()
 phantoms.add(blue, pink, orange, red)
 all_sprite_list = pygame.sprite.Group()
 all_sprite_list.add(player)
-all_sprite_list.add(blue, pink, orange, red)
+all_sprite_list.add(blue, pink, orange, red) 
+
+#200 * 2^numero_fanstasmas
 
 
 # Funciones
 def draw_sprite(spr):
     screen.blit(spr.image, spr.rect)
     pygame.display.update()
+
+def puntuacion_fantasmas_comidos():
+    Ghost.numero_fantasmas += 1
+    return (200 * 2**Ghost.numero_fantasmas)
 
 
 def move_sprite(spr, speed):
@@ -56,14 +62,18 @@ def collision(pacman, phantoms):
     phantom = pygame.sprite.spritecollideany(pacman, phantoms)
     if (phantom):
         if (phantom.scaredTime != 0):  # fantasma asustado
+            if (phantom.scaredTime < 3000):
+                update_score(screen, puntuacion_fantasmas_comidos(), pacman)
             phantom.change_mood("Eyes")
             phantom.scaredTime = 3001
+            
         else:
             if pacman.lives > 0:
                 pacman.lives -= 1
             reset_sprites(pacman, phantoms)
             if(pacman.lives == 0):
                 pygame.event.post(pygame.event.Event(GAME_OVER))
+        
                 
 
 
@@ -72,7 +82,7 @@ all_sprite_list.draw(screen)
 
 def main():
     run = True
-    speed = 1  # Debe ser una potencia de 2
+    speed = 2  # Debe ser una potencia de 2
 
     while run:
         for event in pygame.event.get():
@@ -111,6 +121,7 @@ def main():
                         player.lives = 3
                         retry_button.antihover(screen)
                         Ghost.level = 1
+                        player.score = -10
                         set_board_again(screen, player, phantoms)
                         all_sprite_list.draw(screen)
                     elif(pygame.Rect.collidepoint(exit_button.rect, x, y)):

@@ -6,38 +6,7 @@ from ghost import Ghost
 #Constantes
 yellow = pygame.Color(255, 242, 0)
 black = pygame.Color(0, 0, 0)
-
-posiciones_bloque_right = [(1,2),(1,3),(1,4),(1,5),(1,7),(1,8),(1,9),
-                            (1,10),(3,5),(3,6),(3,7),(5,3),(5,4),(5,5),
-                            (5,7),(5,8),(5,9),(7,6),(7,8),(7,9),(8,5),
-                            (9,9),(9,10),(15,3),(15,5),(15,6),(15,7),(15,9),
-                            (13, 4),(13, 5),(13, 7),(13, 8),
-                            (11, 3),(11, 5),(11, 6),(11, 7),(11, 8),(11, 9)]
-
-posiciones_bloque_left = [(3,3),(3,5),(3,6),(3,7),(3,9),(5, 4),(5, 5),
-                            (5, 7),(5, 8),(7, 3),(7, 5),(7, 6),(7, 7),
-                            (7, 8),(7, 9),(9,9),(9,10),(10,5),(17,2),
-                            (17,3),(17,4),(17,5),(17,7),(17,8),(17,9),
-                            (17,10),(15,5),(15,6),(15,7),(13,3),(13,4),
-                            (13,5),(13,7),(13,8),(13,9),(11,6),(11,8),
-                            (11,9)]
-
-posiciones_bloque_down = [(0,5),(1,5),(2,1),(3, 1),(3, 3),(3, 7),(3, 9),
-                            (4,1),(4,3),(4,9),(5,1),(5,5),(5,9),(6,1),
-                            (7,1),(7,3),(7,9),(8, 1),(8, 3),(8, 5),
-                            (8, 7),(9,1),(9,3),(9,7),(18,5),(17,5),(16,1),
-                            (15, 1),(15, 3),(15, 7),(15, 9),
-                            (14,1),(14,3),(14,9),(13,1),(13,5),(13,9),(12,1),
-                            (11,1),(11,3),(11,9),(10, 1),(10, 3),(10, 5),
-                            (10, 7)]
-
-posiciones_bloque_up = [(0,7),(1,7),(2,11),(3, 3),(3, 5),(3, 9),(3, 11),
-                        (4,3),(4,9),(4,11),(5,3),(5,7),(5,11),(6,11),
-                        (7,3),(7,5),(7,11),(8,3),(8,5),(8,7),(8,11),
-                        (9,3),(9,7),(9,9),(18,7),(17,7),(16,11),(15, 3),
-                        (15, 5),(15, 9),(15, 11),
-                        (14,3),(14,9),(14,11),(13,3),(13,7),(13,11),(12,11),
-                        (11,3),(11,5),(11,11),(10,3),(10,5),(10,7),(10,11)]
+white = pygame.Color(255,255,255)
 
 posiciones_camino = [(0, 6) ,(1, 6), (2, 2) ,(2, 3) ,(2, 4) ,(2, 5), 
                 (2, 6) ,(2, 7) ,(2, 8) ,(2, 9) ,(2, 10) ,(3, 2) ,(3, 4) ,
@@ -86,6 +55,7 @@ arial = pygame.font.SysFont("Arial", 26)
 bg_img = pygame.image.load("mapa/game_over.png")
 retry_button = Button("retry", 5*32, 7*32)
 exit_button = Button("exit", 11*32, 7*32)
+score_cleaner = pygame.image.load("mapa/ScoreCleaner.png")
 
 
 #Funciones
@@ -139,6 +109,13 @@ def update_level(screen):
     level_msg = arial.render(f"Lvl: {Ghost.level}", False, (255,255,255))
     screen.blit(level_msg, (70, 0))
 
+def update_score(screen, point, pacman):
+    pacman.score += point
+    score_num = arial.render(f"{pacman.score}", False, white)
+    screen.blit(score_cleaner, (16*32,10))
+    screen.blit(score_num, (16*32,10))
+
+
 def update_board(pacman, special_path, currently_full_paths, phantoms, screen):
     path = pygame.sprite.spritecollideany(pacman, currently_full_paths)
     if(path):
@@ -146,7 +123,13 @@ def update_board(pacman, special_path, currently_full_paths, phantoms, screen):
         if(pygame.Rect.collidepoint(pacman.rect, x, y)):
             if(path.item == "bola"):
                 for phantom in phantoms:
-                    phantom.set_scared_time(9)
+                    if(phantom.scaredTime < 3000):
+                        phantom.set_scared_time(9)
+                Ghost.numero_fantasmas = -1
+                update_score(screen, 50, pacman)
+                
+            elif(path.item == "circulito"):
+                update_score(screen, 10, pacman)
             path.update_item(None)
             currently_full_paths.remove(path)
         if(len(currently_full_paths) == 0): #Has ganado el juego!!
@@ -155,6 +138,7 @@ def update_board(pacman, special_path, currently_full_paths, phantoms, screen):
     if(pygame.sprite.collide_rect(pacman, special_path) and special_path.item == "cherry"):
         x, y = special_path.rect.center
         if(pygame.Rect.collidepoint(pacman.rect, x, y)):
+            update_score(screen, 100, pacman)
             special_path.update_item(None)
     special_path.cherry(currently_full_paths)
     lives_img = pygame.image.load(f"images/{pacman.lives}lives.png")
