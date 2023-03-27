@@ -100,4 +100,3 @@ class Pacman(pygame.sprite.Sprite):
                 self.animation = 1
             self.update_img()
             self.tick += 1
-        
