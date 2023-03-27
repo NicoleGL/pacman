@@ -51,6 +51,7 @@ def puntuacion_fantasmas_comidos():
 
 
 def move_sprite(spr, speed):
+    movimientoRapido = False
     if (spr == player):
         player.move_if_possible(speed)
         player.stop_if_wall()
@@ -82,7 +83,8 @@ all_sprite_list.draw(screen)
 
 def main():
     run = True
-    speed = 2  # Debe ser una potencia de 2
+    speed = 1  # Debe ser una potencia de 2
+    movimientoRapido = False
 
     while run:
         for event in pygame.event.get():
@@ -127,7 +129,13 @@ def main():
                     elif(pygame.Rect.collidepoint(exit_button.rect, x, y)):
                         run = False
                 
-                
+        for phantom in phantoms:
+            if phantom.scaredTime > 0 and phantom.scaredTime < 360:
+                movimientoRapido = True
+        if movimientoRapido == True:
+            speed = 2
+        else:
+            speed = 1
                 
         move_sprite(player, speed)
         player.change_animation()
