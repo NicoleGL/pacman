@@ -134,8 +134,10 @@ def main():
                 movimientoRapido = True
         if movimientoRapido == True:
             speed = 2
+            movimientoRapido = False
         else:
             speed = 1
+            movimientoRapido = False
                 
         move_sprite(player, speed)
         player.change_animation()
