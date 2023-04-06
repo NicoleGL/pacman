@@ -363,11 +363,15 @@ class Ghost(pygame.sprite.Sprite):
     def imScared(self):
         if (self.scaredTime > 0) & (self.scaredTime < 3000):
             self.timepassed()
-            if (self.scaredTime == 360)|(self.scaredTime == 730)|(self.scaredTime == 790)|(self.scaredTime == 850):
+            if(Ghost.level < 15):
+                Ghost.numberLevel = ((Ghost.level - (Ghost.level % 3)) / 3)
+            elif(Ghost.level > 14):
+                Ghost.numberLevel = 5
+            if ((self.scaredTime == (840 - (96*Ghost.numberLevel))) | (self.scaredTime == (960 - (108*Ghost.numberLevel)))):
                 self.change_mood("ScaredW")
-            if (self.scaredTime == 10)|(self.scaredTime == 670)|(self.scaredTime == 760)|(self.scaredTime == 820):
+            if ((self.scaredTime == 10) | (self.scaredTime == (900 - (102*Ghost.numberLevel))) | (self.scaredTime == (1020 - (114*Ghost.numberLevel)))):
                 self.change_mood("ScaredB")
-            if self.scaredTime == 880:
+            if (self.scaredTime == (1080 - (120*Ghost.numberLevel))):
                 self.change_mood(self.name)
                 self.scaredTime = 0
         elif (self.scaredTime > 3000):
