@@ -28,6 +28,7 @@ class Ghost(pygame.sprite.Sprite):
         self.esquina = (9,8)
 
         Ghost.level = 1
+        Ghost.numberLevel = 0
         Ghost.numero_fantasmas = -1
 
 
