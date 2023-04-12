@@ -52,6 +52,10 @@ def puntuacion_fantasmas_comidos():
 
 def move_sprite(spr, speed):
     if (spr == player):
+        if ((player.rect.x % speed) != 0 and player.direction == "left"):
+            player.rect.x -= 1
+        if ((player.rect.y % speed) != 0 and player.direction == "up"):
+            player.rect.x -= 1
         player.move_if_possible(speed)
         player.stop_if_wall()
     spr.rect.x += spr.speed[0]
@@ -135,7 +139,7 @@ def main():
             speed = 1
             movimientoRapido = False
         else:
-            speed = 1
+            speed = 1 
                 
         move_sprite(player, speed)
         player.change_animation()
