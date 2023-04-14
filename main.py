@@ -55,7 +55,7 @@ def move_sprite(spr, speed):
         if ((player.rect.x % speed) != 0 and player.direction == "left"):
             player.rect.x -= 1
         if ((player.rect.y % speed) != 0 and player.direction == "up"):
-            player.rect.x -= 1
+            player.rect.y -= 1
         player.move_if_possible(speed)
         player.stop_if_wall()
     spr.rect.x += spr.speed[0]
@@ -136,7 +136,7 @@ def main():
             if phantom.scaredTime > 0 and phantom.scaredTime < 360:
                 movimientoRapido = True
         if movimientoRapido == True:
-            speed = 1
+            speed = 2
             movimientoRapido = False
         else:
             speed = 1 
