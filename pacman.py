@@ -51,14 +51,6 @@ class Pacman(pygame.sprite.Sprite):
         if(self.next_direction == "right"):
             chunk_x += 1
         return (chunk_x, chunk_y)
-    
-    def speed_near_wall(self, speed):
-        chunk_x, chunk_y = self.next_chunk()
-        if((self.direction == "left") and ((self.rect.x - speed) // 32) == chunk_x):
-            return (self.rect.x - (chunk_x *32 + 31))
-        else:
-            return speed
-
 
     def stop_if_wall(self):
         chunk = self.next_chunk()
@@ -74,7 +66,6 @@ class Pacman(pygame.sprite.Sprite):
             if((self.direction == "left") and (self.rect.x <= ((chunk_x + 1)*32))
                or (self.direction == "right")):
                 self.speed = (0, self.speed[1])
-                print("hola")
             elif((self.direction == "up" and self.rect.y <= ((chunk_y + 1)*32))
                or (self.direction == "down")):
                 self.speed = (self.speed[0], 0)
@@ -84,20 +75,19 @@ class Pacman(pygame.sprite.Sprite):
         chunk = self.next_possible_chunk()
         chunk_x, chunk_y = chunk
         path = board.posiciones_camino
-        new_speed = self.speed_near_wall(speed)
         if(chunk in path and chunk != (9,5)):
             if(self.next_direction == "left" and self.rect.y <= (chunk_y*32)):
                 self.direction = self.next_direction
-                self.speed = (-new_speed, 0)
+                self.speed = (-speed, 0)
             elif(self.next_direction == "right" and self.rect.y <= (chunk_y*32)):
                 self.direction = self.next_direction
-                self.speed = (new_speed, 0)
+                self.speed = (speed, 0)
             elif(self.next_direction == "up" and self.rect.x <= (chunk_x*32)):
                 self.direction = self.next_direction
-                self.speed = (0, -new_speed)
+                self.speed = (0, -speed)
             elif(self.next_direction == "down" and self.rect.x <= (chunk_x*32)):
                 self.direction = self.next_direction
-                self.speed = (0, new_speed)
+                self.speed = (0, speed)
         self.update_img()
         
     
