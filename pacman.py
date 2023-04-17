@@ -18,6 +18,8 @@ class Pacman(pygame.sprite.Sprite):
         self.tick = 0
         self.lives = 3
         self.score = -10
+        self.dead = False
+        self.now = False
 
     def update_img(self):
         self.image = pygame.image.load(f"images/paknam_{self.direction}{self.animation}.png").convert()
@@ -76,33 +78,51 @@ class Pacman(pygame.sprite.Sprite):
         chunk_x, chunk_y = chunk
         path = board.posiciones_camino
         if(chunk in path and chunk != (9,5)):
-            if(self.next_direction == "left" and self.rect.y <= (chunk_y*32)):
-                self.direction = self.next_direction
-                self.speed = (-speed, 0)
-            elif(self.next_direction == "right" and self.rect.y <= (chunk_y*32)):
-                self.direction = self.next_direction
-                self.speed = (speed, 0)
-            elif(self.next_direction == "up" and self.rect.x <= (chunk_x*32)):
-                self.direction = self.next_direction
-                self.speed = (0, -speed)
-            elif(self.next_direction == "down" and self.rect.x <= (chunk_x*32)):
-                self.direction = self.next_direction
-                self.speed = (0, speed)
+            if(self.dead == False):
+                if(self.next_direction == "left" and self.rect.y <= (chunk_y*32)):
+                    self.direction = self.next_direction
+                    self.speed = (-speed, 0)
+                elif(self.next_direction == "right" and self.rect.y <= (chunk_y*32)):
+                    self.direction = self.next_direction
+                    self.speed = (speed, 0)
+                elif(self.next_direction == "up" and self.rect.x <= (chunk_x*32)):
+                    self.direction = self.next_direction
+                    self.speed = (0, -speed)
+                elif(self.next_direction == "down" and self.rect.x <= (chunk_x*32)):
+                    self.direction = self.next_direction
+                    self.speed = (0, speed)
         self.update_img()
         
     
     def change_animation(self):
-        if(self.speed != (0,0)):
-            if((self.tick % 30 == 0)):
-                self.animation = 2
-            elif(self.tick % 15 == 0):
+        if(self.dead):
+            self.direction = "Ani"
+            if( (self.tick == 120) | (self.tick == 240) | (self.tick == 300) | (self.tick == 360)):
                 self.animation = 1
-            self.update_img()
-            self.tick += 1
-            
-            
+            elif((self.tick == 60) | (self.tick == 180) | (self.tick == 270) | (self.tick == 330)):
+                self.animation = 2
+            elif(self.tick == 380):
+                self.animation = 3
+            elif(self.tick == 400):
+                self.animation = 4
+            elif(self.tick == 420):
+                self.animation = 5
+            elif(self.tick == 430):
+                self.animation = 1
+                self.tick = 0
+                self.dead = False
+                self.now = True
+        else:
+            if(self.speed != (0,0)):
+                if((self.tick % 30 == 0)):
+                    self.animation = 2
+                elif(self.tick % 15 == 0):
+                    self.animation = 1
+                self.update_img()
+        self.tick += 1
+
     def change_speed(self, speed):
-        if ((self.rect.x % speed) != 0 and (self.direction == "left" or self.direction == "right")):
-            self.rect.x -= 1
-        if ((self.rect.y % speed) != 0 and (self.direction == "up" or self.direction == "down")):
-            self.rect.y -= 1
+            if ((self.rect.x % speed) != 0 and (self.direction == "left" or self.direction == "right")):
+                self.rect.x -= 1
+            if ((self.rect.y % speed) != 0 and (self.direction == "up" or self.direction == "down")):
+                self.rect.y -= 1

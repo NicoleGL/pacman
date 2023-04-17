@@ -13,6 +13,7 @@ class Ghost(pygame.sprite.Sprite):
         self.image.set_colorkey(yellow)
         self.waited = 0
         self.scaredTime = 0
+
         
         self.rect = self.image.get_rect()
         self.posInicial = posInicial
@@ -368,12 +369,14 @@ class Ghost(pygame.sprite.Sprite):
                 Ghost.numberLevel = ((Ghost.level - (Ghost.level % 3)) / 3)
             elif(Ghost.level > 14):
                 Ghost.numberLevel = 5
-            if ((self.scaredTime == (840 - (96*Ghost.numberLevel))) | (self.scaredTime == (960 - (108*Ghost.numberLevel)))):
+            if ((self.scaredTime == (840 - (96*Ghost.numberLevel))) or (self.scaredTime == (960 - (108*Ghost.numberLevel)))):
                 self.change_mood("ScaredW")
-            if ((self.scaredTime == 10) | (self.scaredTime == (900 - (102*Ghost.numberLevel))) | (self.scaredTime == (1020 - (114*Ghost.numberLevel)))):
+            if ((self.scaredTime == 10) or (self.scaredTime == (900 - (102*Ghost.numberLevel))) or (self.scaredTime == (1020 - (114*Ghost.numberLevel)))):
                 self.change_mood("ScaredB")
             if (self.scaredTime == (1080 - (120*Ghost.numberLevel))):
                 self.change_mood(self.name)
                 self.scaredTime = 0
         elif (self.scaredTime > 3000):
             self.change_mood("Eyes")
+
+        
