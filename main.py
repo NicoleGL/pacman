@@ -61,16 +61,17 @@ def move_sprite(spr, speed):
 def collision(pacman, phantoms):
     phantom = pygame.sprite.spritecollideany(pacman, phantoms)
     if (phantom):
-        if (phantom.scaredTime != 0):  # fantasma asustado
-            if (phantom.scaredTime < 3000):
+        if ((phantom.scaredTime != 0) | (pacman.dead == True)):  # fantasma asustado
+            if ((phantom.scaredTime < 3000) & (phantom.scaredTime > 0)):
                 update_score(screen, puntuacion_fantasmas_comidos(), pacman)
-            phantom.change_mood("Eyes")
-            phantom.scaredTime = 3001
-            
+                phantom.change_mood("Eyes")
+                phantom.scaredTime = 3001
         else:
             if pacman.lives > 0:
                 pacman.lives -= 1
-            reset_sprites(pacman, phantoms)
+                pacman.dead = True
+                pacman.speed = (0,0)
+                pacman.tick = 0
             if(pacman.lives == 0):
                 pygame.event.post(pygame.event.Event(GAME_OVER))
         
@@ -157,14 +158,9 @@ def main():
             if (phantom.rect.x, phantom.rect.y) == phantom.posInicial:
                 phantom.scaredTime = 0
                 phantom.change_mood(phantom.name)
-        
-        
-
-        for phantom in phantoms:
-            phantom.animation2()
-            phantom.imScared()
-            phantom.moveGhost(posiciones_camino, (player.rect.x//32, player.rect.y//32))
-
+        if(player.now == True):
+            reset_sprites(player, phantoms)
+            player.now = False
         collision(player, phantoms)
         if(player.lives != 0):
             draw_sprite(player)
@@ -172,6 +168,11 @@ def main():
             special_path.cherry(currently_full_paths)
             set_path(screen)
             all_sprite_list.draw(screen)
+        if(player.dead == False):
+            for phantom in phantoms:
+                phantom.animation2()
+                phantom.imScared()
+                phantom.moveGhost(posiciones_camino, (player.rect.x//32, player.rect.y//32))
         
         pygame.display.update()
         clock.tick(FPS)
