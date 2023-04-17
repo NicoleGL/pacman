@@ -99,3 +99,10 @@ class Pacman(pygame.sprite.Sprite):
                 self.animation = 1
             self.update_img()
             self.tick += 1
+            
+            
+    def change_speed(self, speed):
+        if ((self.rect.x % speed) != 0 and (self.direction == "left" or self.direction == "right")):
+            self.rect.x -= 1
+        if ((self.rect.y % speed) != 0 and (self.direction == "up" or self.direction == "down")):
+            self.rect.y -= 1
