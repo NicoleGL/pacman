@@ -165,6 +165,7 @@ def reset_sprites(pacman, phantoms):
         phantom.scaredTime = 0
         phantom.rect.x = phantom.posInicial[0]
         phantom.rect.y = phantom.posInicial[1]
+        phantom.change_mood(phantom.name)
     pacman.direction = None
     pacman.next_direction = None
     pacman.rect.x = pacman.x
