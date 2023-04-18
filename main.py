@@ -161,6 +161,9 @@ def main():
         if(player.now == True):
             reset_sprites(player, phantoms)
             player.now = False
+            for phantom in phantoms:
+                phantom.change_mood(phantom.name)
+                phantom.scaredTime = 0
         collision(player, phantoms)
         if(player.lives != 0):
             draw_sprite(player)
