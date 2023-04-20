@@ -1,4 +1,5 @@
 import pygame
+import os
 from pygame.locals import *
 from pacman import *
 from board import *
@@ -103,6 +104,8 @@ def main():
 
 
             if event.type == GAME_OVER:
+                print(f"Tu puntuacion es {player.score}")
+                print(f"Has llegado al nivel {Ghost.level}")
                 game_over_screen(screen)
                 
             if event.type == MOUSEMOTION:
@@ -120,6 +123,7 @@ def main():
                 if(player.lives == 0):
                     x, y = event.pos
                     if(pygame.Rect.collidepoint(retry_button.rect, x, y)):
+                        os.system("cls")
                         player.lives = 3
                         retry_button.antihover(screen)
                         Ghost.level = 1
@@ -177,5 +181,5 @@ def main():
         pygame.display.update()
         clock.tick(FPS)
 
-
+os.system("cls")
 main()

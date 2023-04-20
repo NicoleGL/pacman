@@ -1,5 +1,4 @@
 @ECHO OFF
-
-START main.py
-
+START python main.py
+exit
 pause
